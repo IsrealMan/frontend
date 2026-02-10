@@ -11,7 +11,9 @@ export function useWebSocket(onMessage) {
     const token = getAccessToken();
     if (!token) return;
 
-    const ws = new WebSocket(`ws://localhost:3001?token=${token}`);
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const wsUrl = apiUrl.replace(/^http/, 'ws');
+    const ws = new WebSocket(`${wsUrl}?token=${token}`);
 
     ws.onopen = () => {
       setConnected(true);

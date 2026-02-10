@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001',
-  withCredentials: true
+  baseURL: "",
+  withCredentials: true,
 });
 
 let accessToken = null;
@@ -21,7 +21,7 @@ export function clearAccessToken() {
 }
 
 // Request interceptor
-api.interceptors.request.use(config => {
+api.interceptors.request.use((config) => {
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -30,22 +30,30 @@ api.interceptors.request.use(config => {
 
 // Response interceptor for 401
 api.interceptors.response.use(
-  response => response,
-  async error => {
+  (response) => response,
+  async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Skip refresh logic for auth endpoints to avoid infinite loop
+    const isAuthEndpoint = originalRequest.url?.includes('/auth/');
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthEndpoint
+    ) {
       originalRequest._retry = true;
 
       if (!refreshPromise) {
-        refreshPromise = api.post('/auth/refresh')
-          .then(res => {
+        refreshPromise = api
+          .post("/auth/refresh")
+          .then((res) => {
             accessToken = res.data.accessToken;
             return accessToken;
           })
-          .catch(err => {
+          .catch((err) => {
             accessToken = null;
-            window.dispatchEvent(new Event('auth:logout'));
+            window.dispatchEvent(new Event("auth:logout"));
             throw err;
           })
           .finally(() => {
@@ -63,7 +71,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

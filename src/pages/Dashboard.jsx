@@ -5,25 +5,44 @@ import RecommendationItem from '../components/RecommendationItem';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import AnalysisModal from '../components/AnalysisModal';
+import RCModal from '../components/RCModal';
 
 function Dashboard() {
   const { data: overview, loading: overviewLoading, error: overviewError } = useApi('/api/overview');
   const { data: recommendations, loading: recsLoading, error: recsError } = useApi('/api/recommendations');
 
-  const [modalOpen, setModalOpen] = useState(false);
+  // Analysis Modal state
+  const [analysisModalOpen, setAnalysisModalOpen] = useState(false);
   const [selectedParameter, setSelectedParameter] = useState(null);
   const [selectedAlertType, setSelectedAlertType] = useState(null);
+
+  // RC Modal state
+  const [rcModalOpen, setRcModalOpen] = useState(false);
+  const [rcParameter, setRcParameter] = useState(null);
+  const [rcAlertType, setRcAlertType] = useState(null);
 
   const handleAnalysisClick = (parameterName, alertType) => {
     setSelectedParameter(parameterName);
     setSelectedAlertType(alertType);
-    setModalOpen(true);
+    setAnalysisModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
+  const handleCloseAnalysisModal = () => {
+    setAnalysisModalOpen(false);
     setSelectedParameter(null);
     setSelectedAlertType(null);
+  };
+
+  const handleRCClick = (parameterName, alertType) => {
+    setRcParameter(parameterName);
+    setRcAlertType(alertType);
+    setRcModalOpen(true);
+  };
+
+  const handleCloseRCModal = () => {
+    setRcModalOpen(false);
+    setRcParameter(null);
+    setRcAlertType(null);
   };
 
   return (
@@ -54,6 +73,7 @@ function Dashboard() {
               parameters={overview?.criticalAlerts?.affectedParameters}
               variant="critical"
               onAnalysisClick={handleAnalysisClick}
+              onRCClick={handleRCClick}
             />
             <KPICard
               title="Warnings"
@@ -62,6 +82,7 @@ function Dashboard() {
               parameters={overview?.warnings?.affectedParameters}
               variant="warning"
               onAnalysisClick={handleAnalysisClick}
+              onRCClick={handleRCClick}
             />
           </>
         )}
@@ -94,10 +115,18 @@ function Dashboard() {
 
       {/* Analysis Modal */}
       <AnalysisModal
-        isOpen={modalOpen}
-        onClose={handleCloseModal}
+        isOpen={analysisModalOpen}
+        onClose={handleCloseAnalysisModal}
         parameterName={selectedParameter}
         alertType={selectedAlertType}
+      />
+
+      {/* RC Modal */}
+      <RCModal
+        isOpen={rcModalOpen}
+        onClose={handleCloseRCModal}
+        parameterName={rcParameter}
+        alertType={rcAlertType}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BarChart3, Calendar } from 'lucide-react';
 
-function KPICard({ title, count, subtitle, parameters, variant = 'critical', onAnalysisClick }) {
+function KPICard({ title, count, subtitle, parameters, variant = 'critical', onAnalysisClick, onRCClick }) {
   const isCritical = variant === 'critical';
   const [checkedItems, setCheckedItems] = useState({});
 
@@ -18,6 +18,12 @@ function KPICard({ title, count, subtitle, parameters, variant = 'critical', onA
   const handleAnalysisClick = () => {
     if (hasSelection && onAnalysisClick) {
       onAnalysisClick(selectedParams[0].name, variant);
+    }
+  };
+
+  const handleRCClick = () => {
+    if (hasSelection && onRCClick) {
+      onRCClick(selectedParams[0].name, variant);
     }
   };
 
@@ -77,6 +83,7 @@ function KPICard({ title, count, subtitle, parameters, variant = 'critical', onA
         </button>
         <button
           disabled={!hasSelection}
+          onClick={handleRCClick}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
             hasSelection
               ? 'bg-white/90 text-gray-700 hover:bg-white cursor-pointer shadow-sm'

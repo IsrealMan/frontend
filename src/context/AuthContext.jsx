@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
     clearAccessToken();
   }, []);
 
-  // Check auth on mount
+  // Check auth on mount (silent - no console errors for expected 401)
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -25,8 +25,10 @@ export function AuthProvider({ children }) {
         setAccessToken(res.data.accessToken);
         const userRes = await api.get('/auth/me');
         setUser(userRes.data.user);
-      } catch (err) {
+      } catch {
+        // Expected when not logged in - silently set user to null
         setUser(null);
+        clearAccessToken();
       } finally {
         setLoading(false);
       }

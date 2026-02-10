@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: Activity, label: 'Production Health', path: '/production-health' },
   { icon: BarChart3, label: 'Production Metrics', path: '/production-metrics' },
   { icon: CheckCircle2, label: 'Quality Control', path: '/quality-control' },

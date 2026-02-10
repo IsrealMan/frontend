@@ -1,6 +1,19 @@
 import { Search, Bell } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 function Topbar() {
+  const { user } = useAuth();
+
+  const getInitials = (name) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
   return (
     <header className="fixed top-0 left-[220px] right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 z-10">
       {/* Title */}
@@ -32,9 +45,9 @@ function Topbar() {
         {/* User */}
         <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
           <div className="w-9 h-9 bg-primary rounded-full flex items-center justify-center">
-            <span className="text-white text-sm font-semibold">TU</span>
+            <span className="text-white text-sm font-semibold">{getInitials(user?.name)}</span>
           </div>
-          <span className="text-sm font-medium text-gray-700">Tech User</span>
+          <span className="text-sm font-medium text-gray-700">{user?.name || 'User'}</span>
         </div>
       </div>
     </header>

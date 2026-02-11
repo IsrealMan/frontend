@@ -477,10 +477,10 @@ function LandingPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
+          <div className="flex flex-wrap justify-center gap-8">
             {team.map((m) => (
-              <div key={m.name} className="group text-center">
-                <div className="relative mx-auto mb-4">
+              <div key={m.name} className="group text-center w-36">
+                <div className="relative flex justify-center mb-4">
                   <div className={`w-24 h-24 bg-gradient-to-br ${m.color} rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all group-hover:scale-105 group-hover:-translate-y-1`}>
                     <span className="text-white font-bold text-xl tracking-wide">
                       {m.name.split(' ').map(n => n[0]).join('')}

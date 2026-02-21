@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   MessageSquare,
   AlertTriangle,
+  ShieldCheck,
   Settings,
   ChevronLeft
 } from 'lucide-react';
@@ -17,6 +18,7 @@ const navItems = [
   { icon: CheckCircle2, label: 'Quality Control', path: '/quality-control' },
   { icon: MessageSquare, label: 'Chat', path: '/chat' },
   { icon: AlertTriangle, label: 'Anomalies', path: '/anomalies' },
+  { icon: ShieldCheck, label: 'Rules', path: '/rules' },
   { icon: Settings, label: 'Settings', path: '/settings' },
 ];
 
@@ -28,7 +30,7 @@ function Sidebar() {
         <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
           <span className="text-white font-bold text-lg">P</span>
         </div>
-        <span className="text-xl font-semibold text-gray-800">Predixa</span>
+        <span className="text-xl font-semibold text-gray-800">PredixaAI</span>
       </div>
 
       {/* Navigation */}

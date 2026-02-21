@@ -1,11 +1,16 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import ProductionHealth from './pages/ProductionHealth';
+import QualityControl from './pages/QualityControl';
+import Settings from './pages/Settings';
+import ProductionMetrics from './pages/ProductionMetrics';
+import Rules from './pages/Rules';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
@@ -25,6 +30,7 @@ function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AuthProvider>
+        <NotificationProvider>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
@@ -52,7 +58,7 @@ function App() {
             path="/production-metrics"
             element={
               <ProtectedRoute>
-                <AppLayout><div className="text-gray-500">Production Metrics - Coming Soon</div></AppLayout>
+                <AppLayout><ProductionMetrics /></AppLayout>
               </ProtectedRoute>
             }
           />
@@ -60,7 +66,7 @@ function App() {
             path="/quality-control"
             element={
               <ProtectedRoute>
-                <AppLayout><div className="text-gray-500">Quality Control - Coming Soon</div></AppLayout>
+                <AppLayout><QualityControl /></AppLayout>
               </ProtectedRoute>
             }
           />
@@ -81,14 +87,23 @@ function App() {
             }
           />
           <Route
+            path="/rules"
+            element={
+              <ProtectedRoute>
+                <AppLayout><Rules /></AppLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/settings"
             element={
               <ProtectedRoute>
-                <AppLayout><div className="text-gray-500">Settings - Coming Soon</div></AppLayout>
+                <AppLayout><Settings /></AppLayout>
               </ProtectedRoute>
             }
           />
         </Routes>
+        </NotificationProvider>
       </AuthProvider>
     </BrowserRouter>
   );

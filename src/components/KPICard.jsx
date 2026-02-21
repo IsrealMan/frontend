@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BarChart3, Calendar } from 'lucide-react';
+import { formatParam } from '../utils/parameterLabels';
 
 function KPICard({ title, count, subtitle, parameters, variant = 'critical', onAnalysisClick, onRCClick }) {
   const isCritical = variant === 'critical';
@@ -61,7 +62,7 @@ function KPICard({ title, count, subtitle, parameters, variant = 'critical', onA
                   )}
                 </div>
               </div>
-              <span className="text-white text-sm group-hover:text-white/90">{param.name}</span>
+              <span className="text-white text-sm group-hover:text-white/90">{formatParam(param.name)}</span>
             </label>
           ))}
         </div>

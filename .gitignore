@@ -1,1 +1,12 @@
 node_modules
+
+# Local env files — never commit real secrets
+.env
+.env.local
+.env.*.local
+
+# .env.production is intentionally committed (contains only the public API URL)
+# If it ever holds secrets, add it here too.
+
+# Build output
+dist

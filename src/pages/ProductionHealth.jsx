@@ -1,164 +1,166 @@
-import { useState } from 'react';
-import { RefreshCw, MessageSquare, Lightbulb } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Activity, MessageSquare, Lightbulb, RefreshCw } from 'lucide-react';
 import ParameterCard from '../components/ParameterCard';
 import AIRecommendationCard from '../components/AIRecommendationCard';
 import RecommendationItem from '../components/RecommendationItem';
+import { useApi } from '../hooks/useApi';
+import { useWebSocket } from '../hooks/useWebSocket';
 
-const tabs = [
-  { id: 'machine-health', label: 'Machine Health', icon: RefreshCw },
-  { id: 'recommendations', label: 'Recommendations', icon: MessageSquare },
-  { id: 'improvements', label: 'Improvements', icon: Lightbulb },
+const TABS = [
+  { id: 'machine-health',  label: 'Machine Health',  icon: Activity       },
+  { id: 'recommendations', label: 'Recommendations', icon: MessageSquare  },
+  { id: 'improvements',    label: 'Improvements',    icon: Lightbulb      },
 ];
 
-// Mock data for charts
-const temperatureData = [
-  { time: '14:00', value: 65 },
-  { time: '14:30', value: 58 },
-  { time: '15:00', value: 72 },
-  { time: '15:30', value: 68 },
-  { time: '16:00', value: 75 },
-  { time: '16:30', value: 82 },
-  { time: '17:00', value: 78 },
-  { time: '17:30', value: 85 },
-  { time: '18:00', value: 82 },
+const RANGE_OPTIONS = ['6h', '12h', '24h'];
+
+const AI_RECOMMENDATIONS = [
+  { id: 1, title: 'Critical Temperature Alert',   description: 'Machine A1 temperature has exceeded the safety threshold of 80°C', tags: ['Machine A1', 'Temperature'], recommendation: 'Reduce operational load and check cooling system immediately.', variant: 'critical' },
+  { id: 2, title: 'Thickness Variation Detected', description: 'Product thickness is showing a downward trend below acceptable range.', tags: ['Thickness'], recommendation: 'Calibrate thickness control mechanism and inspect feed rollers.', variant: 'warning' },
+  { id: 3, title: 'Predictive Maintenance Due',   description: 'Machine B3 is approaching its scheduled maintenance window based on operational hours.', tags: ['Machine B3'], recommendation: 'Schedule maintenance within the next 48 hours to avoid unplanned downtime.', variant: 'info' },
 ];
 
-const pressureData = [
-  { time: '14:00', value: 88 },
-  { time: '14:30', value: 92 },
-  { time: '15:00', value: 85 },
-  { time: '15:30', value: 90 },
-  { time: '16:00', value: 95 },
-  { time: '16:30', value: 88 },
-  { time: '17:00', value: 92 },
-  { time: '17:30', value: 90 },
-  { time: '18:00', value: 94 },
-];
+function CardSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm animate-pulse">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-gray-100" />
+          <div className="h-3.5 w-24 bg-gray-100 rounded" />
+        </div>
+        <div className="h-3.5 w-3.5 bg-gray-100 rounded" />
+      </div>
+      <div className="h-10 w-28 bg-gray-100 rounded mb-4" />
+      <div className="h-36 bg-gray-50 rounded-xl" />
+      <div className="flex justify-between mt-3">
+        <div className="h-3 w-14 bg-gray-100 rounded" />
+        <div className="h-5 w-20 bg-gray-100 rounded-full" />
+        <div className="h-3 w-14 bg-gray-100 rounded" />
+      </div>
+    </div>
+  );
+}
 
-const humidityData = [
-  { time: '14:00', value: 52 },
-  { time: '14:30', value: 48 },
-  { time: '15:00', value: 50 },
-  { time: '15:30', value: 46 },
-  { time: '16:00', value: 49 },
-  { time: '16:30', value: 45 },
-  { time: '17:00', value: 48 },
-  { time: '17:30', value: 46 },
-  { time: '18:00', value: 47 },
-];
+function MachineHealth({ range, onRangeChange }) {
+  const { data: raw, loading, error } = useApi(`/api/machine-health?range=${range}`);
+  const [params, setParams] = useState([]);
 
-// AI Recommendations data
-const aiRecommendations = [
-  {
-    id: 1,
-    title: 'Critical Temperature Alert',
-    description: 'Machine A1 temperature has exceeded the safety threshold of 80°C',
-    tags: ['Machine A1', 'Temperature'],
-    recommendation: 'Reduce operational load and check cooling system',
-    variant: 'critical'
-  },
-  {
-    id: 2,
-    title: 'Thickness Variation Detected',
-    description: 'Product thickness is showing downward trend below acceptable range',
-    tags: ['Thickness'],
-    recommendation: 'Calibrate thickness control mechanism',
-    variant: 'warning'
-  },
-  {
-    id: 3,
-    title: 'Predictive Maintenance Due',
-    description: 'Machine B3 approaching scheduled maintenance window based on operational hours',
-    tags: ['Machine B3'],
-    recommendation: 'Schedule maintenance within next 48 hours',
-    variant: 'info'
-  }
-];
+  // Populate from REST response
+  useEffect(() => {
+    if (raw) setParams(raw);
+  }, [raw]);
 
-// Improvement recommendations (same as Dashboard)
-const improvementRecommendations = [
-  { id: 1, title: 'Temperature Control Frequency', impact: 'High Impact' },
-  { id: 2, title: 'Calibration Procedure', impact: 'High Impact' },
-  { id: 3, title: 'Material Feed Rate', impact: 'Medium Impact' },
-  { id: 4, title: 'Operator Training', impact: 'Medium Impact' },
-  { id: 5, title: 'Humidity Control', impact: 'Low Impact' }
-];
+  // Merge WebSocket push updates
+  const handleWsMessage = useCallback((msg) => {
+    if (msg.type !== 'machine-health') return;
+    setParams(prev =>
+      prev.map(p => p.id === msg.data.id ? { ...p, ...msg.data } : p)
+    );
+  }, []);
 
-function ProductionHealth() {
-  const [activeTab, setActiveTab] = useState('machine-health');
+  useWebSocket(handleWsMessage);
 
   return (
     <div>
-      {/* Page Header */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-1">Production Health</h2>
+      {/* Sub-header */}
+      <div className="flex items-center justify-between mb-5">
+        <h3 className="text-base font-semibold text-gray-800">Machine Health Parameters</h3>
+        <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+          {RANGE_OPTIONS.map(r => (
+            <button
+              key={r}
+              onClick={() => onRangeChange(r)}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
+                range === r ? 'bg-white text-gray-800 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {r}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl mb-4">
+          Failed to load machine health data.
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {loading
+          ? Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)
+          : params.map(p => (
+            <ParameterCard
+              key={p.id}
+              title={p.parameter}
+              value={p.currentValue}
+              unit={p.unit}
+              change={Math.abs(p.percentChange)}
+              changeType={p.percentChange >= 0 ? 'up' : 'down'}
+              status={p.status}
+              data={p.trend}
+              upperLimit={p.usl}
+              lowerLimit={p.lsl}
+            />
+          ))
+        }
+      </div>
+
+      {/* Live indicator */}
+      <div className="flex items-center gap-1.5 mt-4">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+        </span>
+        <span className="text-xs text-gray-400">Live updates active</span>
+      </div>
+    </div>
+  );
+}
+
+function ProductionHealth() {
+  const [activeTab, setActiveTab] = useState('machine-health');
+  const [range, setRange]         = useState('6h');
+
+  const { data: improvements, loading: impLoading } = useApi('/api/recommendations');
+
+  return (
+    <div>
+      {/* Page header */}
+      <div className="mb-5">
+        <h2 className="text-xl font-bold text-gray-900">Production Health</h2>
+        <p className="text-sm text-gray-500 mt-0.5">Real-time monitoring across all production lines</p>
       </div>
 
       {/* Tabs */}
-      <div className="bg-gray-100 rounded-xl p-1.5 inline-flex gap-1 mb-6">
-        {tabs.map((tab) => (
+      <div className="bg-gray-100 rounded-xl p-1 inline-flex gap-0.5 mb-6">
+        {TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
               activeTab === tab.id
-                ? 'bg-white text-gray-800 shadow-sm'
+                ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-500 hover:text-gray-700'
             }`}
           >
-            <tab.icon size={16} />
+            <tab.icon size={15} />
             {tab.label}
           </button>
         ))}
       </div>
 
-      {/* Tab Content */}
+      {/* ── Machine Health ── */}
       {activeTab === 'machine-health' && (
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Machine Health Parameters</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <ParameterCard
-              title="Temperature"
-              value={82}
-              unit="°C"
-              change="4.5%"
-              changeType="up"
-              status="warning"
-              data={temperatureData}
-              upperLimit={90}
-              lowerLimit={50}
-            />
-            <ParameterCard
-              title="Pressure"
-              value={94}
-              unit="PSI"
-              change="2.1%"
-              changeType="down"
-              status="normal"
-              data={pressureData}
-              upperLimit={100}
-              lowerLimit={75}
-            />
-            <ParameterCard
-              title="Humidity"
-              value={47}
-              unit="%"
-              change="1.8%"
-              changeType="down"
-              status="normal"
-              data={humidityData}
-              upperLimit={55}
-              lowerLimit={35}
-            />
-          </div>
-        </div>
+        <MachineHealth range={range} onRangeChange={setRange} />
       )}
 
+      {/* ── Recommendations ── */}
       {activeTab === 'recommendations' && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">AI Recommendations</h3>
+          <h3 className="text-base font-semibold text-gray-800 mb-4">AI Recommendations</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {aiRecommendations.map((rec) => (
+            {AI_RECOMMENDATIONS.map(rec => (
               <AIRecommendationCard
                 key={rec.id}
                 title={rec.title}
@@ -172,21 +174,26 @@ function ProductionHealth() {
         </div>
       )}
 
+      {/* ── Improvements ── */}
       {activeTab === 'improvements' && (
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 className="text-lg font-bold text-gray-800 mb-2">Improvement Recommendations</h3>
-          <p className="text-gray-500 text-sm mb-5">
-            The following parameters could be optimized to improve overall system performance.
-            Click on each parameter to view specific action recommendations.
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <h3 className="text-base font-bold text-gray-800 mb-1">Improvement Recommendations</h3>
+          <p className="text-sm text-gray-500 mb-5">
+            Click each parameter to see specific action recommendations.
           </p>
           <div className="space-y-3">
-            {improvementRecommendations.map((rec) => (
-              <RecommendationItem
-                key={rec.id}
-                title={rec.title}
-                impact={rec.impact}
-              />
-            ))}
+            {impLoading
+              ? Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-12 bg-gray-50 rounded-xl animate-pulse" />
+                ))
+              : (improvements || []).map(rec => (
+                  <RecommendationItem
+                    key={rec.id}
+                    title={rec.title}
+                    impact={rec.impact}
+                  />
+                ))
+            }
           </div>
         </div>
       )}

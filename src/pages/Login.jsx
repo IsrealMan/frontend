@@ -36,7 +36,7 @@ function Login() {
           <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-xl">P</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">Sign in to Predixa</h1>
+          <h1 className="text-2xl font-bold text-gray-800">Sign in to PredixaAI</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">

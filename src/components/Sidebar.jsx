@@ -7,19 +7,21 @@ import {
   MessageSquare,
   AlertTriangle,
   ShieldCheck,
+  Users,
   Settings,
   ChevronLeft
 } from 'lucide-react';
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { icon: Activity, label: 'Production Health', path: '/production-health' },
-  { icon: BarChart3, label: 'Production Metrics', path: '/production-metrics' },
-  { icon: CheckCircle2, label: 'Quality Control', path: '/quality-control' },
-  { icon: MessageSquare, label: 'Chat', path: '/chat' },
-  { icon: AlertTriangle, label: 'Anomalies', path: '/anomalies' },
-  { icon: ShieldCheck, label: 'Rules', path: '/rules' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
+  { icon: LayoutDashboard, label: 'Dashboard',          path: '/dashboard'          },
+  { icon: Activity,        label: 'Production Health',  path: '/production-health'  },
+  { icon: BarChart3,       label: 'Production Metrics', path: '/production-metrics' },
+  { icon: CheckCircle2,    label: 'Quality Control',    path: '/quality-control'    },
+  { icon: MessageSquare,   label: 'Chat',               path: '/chat'               },
+  { icon: AlertTriangle,   label: 'Anomalies',          path: '/anomalies'          },
+  { icon: ShieldCheck,     label: 'Rules',              path: '/rules'              },
+  { icon: Users,           label: 'Users',              path: '/users'              },
+  { icon: Settings,        label: 'Settings',           path: '/settings'           },
 ];
 
 function Sidebar() {

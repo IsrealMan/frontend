@@ -3,6 +3,11 @@ import api, { setAccessToken, clearAccessToken, getAccessToken } from '../servic
 
 const AuthContext = createContext(null);
 
+// Module-level promise so React StrictMode's double-invoke of effects
+// doesn't fire two concurrent refresh requests (which would cause the
+// second one to fail because the first already rotated the token).
+let _initRefreshPromise = null;
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,30 +15,45 @@ export function AuthProvider({ children }) {
   const logout = useCallback(async () => {
     try {
       await api.post('/auth/logout');
-    } catch (err) {
+    } catch {
       // Ignore errors
     }
     setUser(null);
     clearAccessToken();
   }, []);
 
-  // Check auth on mount (silent - no console errors for expected 401)
+  // Restore session on mount
   useEffect(() => {
+    let cancelled = false;
+
     const checkAuth = async () => {
       try {
-        const res = await api.post('/auth/refresh');
+        // Reuse in-flight promise if one already exists (StrictMode double-invoke guard)
+        if (!_initRefreshPromise) {
+          _initRefreshPromise = api.post('/auth/refresh').finally(() => {
+            _initRefreshPromise = null;
+          });
+        }
+        const res = await _initRefreshPromise;
+        if (cancelled) return;
+
         setAccessToken(res.data.accessToken);
         const userRes = await api.get('/auth/me');
+        if (cancelled) return;
+
         setUser(userRes.data.user);
       } catch {
-        // Expected when not logged in - silently set user to null
-        setUser(null);
-        clearAccessToken();
+        if (!cancelled) {
+          setUser(null);
+          clearAccessToken();
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
+
     checkAuth();
+    return () => { cancelled = true; };
   }, []);
 
   // Listen for forced logout

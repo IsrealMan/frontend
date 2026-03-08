@@ -7,6 +7,7 @@ import {
   TrendingUp, CheckCircle2, Mail, Phone
 } from 'lucide-react';
 import RequestDemoModal from '../components/RequestDemoModal';
+import { useTranslations } from '../hooks/useTranslations';
 
 /* ───────────────────── Data ───────────────────── */
 
@@ -196,6 +197,7 @@ function DashboardMockup() {
 /* ───────────────────── Main Page ───────────────────── */
 
 function LandingPage() {
+  const t = useTranslations('landing', 'en');
   const [demoOpen, setDemoOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -300,18 +302,16 @@ function LandingPage() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
             </span>
-            AI-Powered Predictive Maintenance for Manufacturing
+            {t('hero.badge', 'AI-Powered Predictive Maintenance for Manufacturing')}
           </div>
 
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-extrabold leading-[1.1] mb-6 tracking-tight animate-fade-in-up">
-            PredixaAI enables manufacturers to{' '}
-            <span className="text-gradient">predict and prevent</span>{' '}
-            unexpected downtime
+            {t('hero.title', 'PredixaAI enables manufacturers to predict and prevent unexpected downtime')}
           </h1>
 
           <p className="text-lg sm:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.15s' }}>
-            Transform your manufacturing operations with AI that sees problems before they happen — saving millions in lost production.
+            {t('hero.subtitle', 'Transform your manufacturing operations with AI that sees problems before they happen — saving millions in lost production.')}
           </p>
 
           {/* CTAs */}
@@ -347,15 +347,13 @@ function LandingPage() {
         <div ref={r1} className="reveal relative max-w-5xl mx-auto text-center">
           <span className="inline-flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold rounded-full mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
-            The Problem
+            {t('problem.badge', 'The Problem')}
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-8 tracking-tight">
-            The Hidden Cost of Downtime
+            {t('problem.title', 'The Hidden Cost of Downtime')}
           </h2>
           <p className="text-xl sm:text-2xl leading-relaxed text-gray-300 max-w-3xl mx-auto">
-            Unplanned downtime costs the world&apos;s top 500 companies{' '}
-            <span className="text-white font-bold">$1.4 trillion annually</span> — over{' '}
-            <span className="text-gradient font-bold">11% of total revenue</span>.
+            {t('problem.body', "Unplanned downtime costs the world's top 500 companies $1.4 trillion annually — over 11% of total revenue.")}
           </p>
 
           <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -374,20 +372,17 @@ function LandingPage() {
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold rounded-full mb-6">
               <CheckCircle2 size={12} />
-              The Solution
+              {t('solution.badge', 'The Solution')}
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900 mb-8">
-              AI That <span className="text-gradient">Prevents</span> Downtime
+              {t('solution.title', 'AI That Prevents Downtime')}
             </h2>
           </div>
 
           <div className="relative p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-gray-50 to-indigo-50/50 border border-gray-100">
             <div className="absolute top-6 right-6 w-24 h-24 bg-primary/5 rounded-full blur-2xl" />
             <p className="text-lg sm:text-xl text-gray-600 leading-relaxed relative">
-              PredixaAI is an <strong className="text-gray-900">AI-driven platform</strong> that transforms manufacturing operations by{' '}
-              <strong className="text-gray-900">proactively predicting and preventing process anomalies that cause downtime</strong>.
-              Our platform learns from your production data in real time, identifying patterns invisible to human operators,
-              and delivers actionable insights before issues escalate.
+              {t('solution.body', 'PredixaAI is an AI-driven platform that transforms manufacturing operations by proactively predicting and preventing process anomalies that cause downtime. Our platform learns from your production data in real time, identifying patterns invisible to human operators, and delivers actionable insights before issues escalate.')}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               {['Machine Learning', 'Real-Time Analytics', 'Predictive Models', 'Natural Language AI'].map((tag) => (
@@ -406,10 +401,10 @@ function LandingPage() {
           <div ref={r3} className="reveal text-center mb-16">
             <span className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 text-primary text-xs font-semibold rounded-full mb-6">
               <BarChart3 size={12} />
-              Platform
+              {t('capabilities.badge', 'Platform')}
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900">
-              Capabilities
+              {t('capabilities.title', 'Capabilities')}
             </h2>
           </div>
 
@@ -436,10 +431,10 @@ function LandingPage() {
           <div ref={r5} className="reveal text-center mb-16">
             <span className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold rounded-full mb-6">
               <Zap size={12} />
-              Why PredixaAI
+              {t('benefits.badge', 'Why PredixaAI')}
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-gray-900">
-              Benefits
+              {t('benefits.title', 'Benefits')}
             </h2>
           </div>
 
@@ -503,11 +498,10 @@ function LandingPage() {
 
         <div className="relative max-w-3xl mx-auto text-center">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tight">
-            Ready to eliminate{' '}
-            <span className="text-gradient">unplanned downtime</span>?
+            {t('cta.title', 'Ready to eliminate unplanned downtime?')}
           </h2>
           <p className="text-lg text-gray-400 mb-10 max-w-xl mx-auto">
-            Join leading manufacturers who trust PredixaAI to keep their operations running — and their revenue growing.
+            {t('cta.subtitle', 'Join leading manufacturers who trust PredixaAI to keep their operations running — and their revenue growing.')}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
@@ -542,7 +536,7 @@ function LandingPage() {
                 </span>
               </div>
               <p className="text-sm max-w-xs leading-relaxed">
-                AI-driven predictive maintenance for modern manufacturers. Predict. Prevent. Prosper.
+                {t('footer.tagline', 'AI-driven predictive maintenance for modern manufacturers. Predict. Prevent. Prosper.')}
               </p>
             </div>
 

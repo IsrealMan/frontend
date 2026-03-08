@@ -1,19 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import {
-  User, Bell, Settings2, HelpCircle,
+  User, Bell, Settings2, HelpCircle, Globe,
   Save, Loader2, CheckCircle2, ChevronRight,
   Mail, Smartphone, AlertTriangle, Info, Wrench, Tag,
   MessageCircle, BookOpen, ExternalLink,
 } from 'lucide-react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import LocalizationManagement from './LandingLanguages';
 
 // ── Tabs config ─────────────────────────────────────────────
 const TABS = [
-  { id: 'account',       label: 'Account',       icon: User      },
-  { id: 'notifications', label: 'Notifications',  icon: Bell      },
-  { id: 'system',        label: 'System',         icon: Settings2 },
-  { id: 'help',          label: 'Help & Support', icon: HelpCircle },
+  { id: 'account',        label: 'Account',        icon: User      },
+  { id: 'notifications',  label: 'Notifications',   icon: Bell      },
+  { id: 'system',         label: 'System',          icon: Settings2 },
+  { id: 'localization',   label: 'Localization',    icon: Globe     },
+  { id: 'help',           label: 'Help & Support',  icon: HelpCircle },
 ];
 
 const DEPARTMENTS = [
@@ -478,6 +480,7 @@ function Settings() {
           {activeTab === 'account'       && <AccountTab       settings={settings} onSettingsChange={setSettings} />}
           {activeTab === 'notifications' && <NotificationsTab settings={settings} onSettingsChange={setSettings} />}
           {activeTab === 'system'        && <SystemTab        settings={settings} onSettingsChange={setSettings} />}
+          {activeTab === 'localization'  && <LocalizationManagement />}
           {activeTab === 'help'          && <HelpTab />}
         </>
       )}

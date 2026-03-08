@@ -12,6 +12,7 @@ import Settings from './pages/Settings';
 import ProductionMetrics from './pages/ProductionMetrics';
 import Rules from './pages/Rules';
 import UsersPage from './pages/Users';
+import LocalizationManagement from './pages/LandingLanguages';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
@@ -100,6 +101,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <AppLayout><UsersPage /></AppLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/landing-languages"
+            element={
+              <ProtectedRoute>
+                <AppLayout><LocalizationManagement /></AppLayout>
               </ProtectedRoute>
             }
           />

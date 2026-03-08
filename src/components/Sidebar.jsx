@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   ShieldCheck,
   Users,
+  Globe,
   Settings,
   ChevronLeft
 } from 'lucide-react';
@@ -21,6 +22,7 @@ const navItems = [
   { icon: AlertTriangle,   label: 'Anomalies',          path: '/anomalies'          },
   { icon: ShieldCheck,     label: 'Rules',              path: '/rules'              },
   { icon: Users,           label: 'Users',              path: '/users'              },
+  { icon: Globe,           label: 'Localization',        path: '/landing-languages'  },
   { icon: Settings,        label: 'Settings',           path: '/settings'           },
 ];
 

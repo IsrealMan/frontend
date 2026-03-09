@@ -1,4 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <rect width="32" height="32" rx="7" fill="#6366f1"/>
-  <text x="16" y="23" font-family="Arial, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="white">P</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Black circle background -->
+  <circle cx="100" cy="100" r="100" fill="#0a0a0a"/>
+
+  <!--
+    Each path traces the P shape:
+    bottom-of-spine → up spine → angle to peak → angle to upper-right → down right side → angle to bowl-bottom-right → back to spine
+  -->
+
+  <!-- Layer 1: outermost -->
+  <path d="M30,178 L30,60 L100,18 L170,60 L170,112 L130,142 L30,142"
+        fill="none" stroke="white" stroke-width="6.5" stroke-linecap="butt" stroke-linejoin="miter"/>
+
+  <!-- Layer 2 -->
+  <path d="M42,166 L42,68 L107,29 L163,68 L163,113 L127,131 L42,131"
+        fill="none" stroke="white" stroke-width="6.5" stroke-linecap="butt" stroke-linejoin="miter"/>
+
+  <!-- Layer 3 -->
+  <path d="M54,154 L54,76 L114,40 L156,76 L156,114 L124,120 L54,120"
+        fill="none" stroke="white" stroke-width="6.5" stroke-linecap="butt" stroke-linejoin="miter"/>
+
+  <!-- Layer 4: innermost -->
+  <path d="M66,142 L66,84 L121,51 L149,84 L149,115 L121,109 L66,109"
+        fill="none" stroke="white" stroke-width="6.5" stroke-linecap="butt" stroke-linejoin="miter"/>
 </svg>

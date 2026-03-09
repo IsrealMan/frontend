@@ -4,12 +4,10 @@ import api from '../services/api';
 
 function RequestDemoModal({ open, onClose }) {
   const [form, setForm] = useState({ name: '', email: '', company: '', phone: '', message: '' });
-  const [status, setStatus] = useState('idle'); // idle | submitting | success | error
+  const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
-  const panelRef = useRef(null);
   const nameRef = useRef(null);
 
-  // Auto-focus first field on open
   useEffect(() => {
     if (open && nameRef.current) {
       const t = setTimeout(() => nameRef.current.focus(), 100);
@@ -17,7 +15,6 @@ function RequestDemoModal({ open, onClose }) {
     }
   }, [open]);
 
-  // Close on Escape
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => { if (e.key === 'Escape') handleClose(); };
@@ -27,9 +24,7 @@ function RequestDemoModal({ open, onClose }) {
 
   if (!open) return null;
 
-  const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+  const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,160 +40,97 @@ function RequestDemoModal({ open, onClose }) {
     }
   };
 
-  const handleClose = () => {
-    setStatus('idle');
-    setErrorMsg('');
-    onClose();
-  };
+  const handleClose = () => { setStatus('idle'); setErrorMsg(''); onClose(); };
 
-  const inputCls = 'w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all';
+  const inputCls = 'w-full px-4 py-3 bg-transparent border border-white/10 rounded-xl text-sm text-white placeholder-gray-600 focus:outline-none focus:border-sky-400/60 transition-colors';
+
+  const Field = ({ id, label, optional, children }) => (
+    <div className="space-y-2">
+      <label htmlFor={id} className="flex items-center gap-2 text-sm font-medium text-gray-300">
+        {label}
+        {optional && <span className="text-gray-600 font-normal text-xs">optional</span>}
+      </label>
+      {children}
+    </div>
+  );
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Request a Demo">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-gray-950/60 backdrop-blur-sm animate-fade-in" onClick={handleClose} />
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={handleClose} />
 
-      {/* Panel */}
-      <div
-        ref={panelRef}
-        className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto animate-scale-in"
-      >
+      <div className="relative bg-[#0a0f1e] border border-white/10 rounded-2xl shadow-2xl w-full max-w-sm max-h-[90vh] overflow-y-auto">
+
         {/* Header */}
-        <div className="sticky top-0 bg-white/90 backdrop-blur-sm z-10 px-6 pt-6 pb-4 border-b border-gray-100 rounded-t-3xl">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">Request a Demo</h2>
-              <p className="text-xs text-gray-500 mt-0.5">See PredixaAI in action</p>
-            </div>
-            <button
-              onClick={handleClose}
-              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl transition-all"
-              aria-label="Close"
-            >
-              <X size={18} />
-            </button>
+        <div className="flex items-start justify-between p-6 pb-5">
+          <div>
+            <h2 className="text-lg font-semibold text-white">Request a Demo</h2>
+            <p className="text-sm text-gray-500 mt-0.5">See PredixaAI in action</p>
           </div>
+          <button onClick={handleClose} className="p-1.5 text-gray-600 hover:text-gray-300 transition-colors rounded-lg hover:bg-white/5 -mt-0.5" aria-label="Close">
+            <X size={16} />
+          </button>
         </div>
 
+        <div className="h-px bg-white/5 mx-6" />
+
         {status === 'success' ? (
-          <div className="p-8 text-center animate-fade-in-up">
-            <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
-              <CheckCircle2 size={32} className="text-emerald-500" />
+          <div className="p-8 text-center">
+            <div className="w-12 h-12 bg-emerald-400/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 size={24} className="text-emerald-400" />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Thank you!</h3>
-            <p className="text-gray-500 text-sm mb-8 max-w-xs mx-auto">
-              We&apos;ve received your request. Our team will reach out within 24 hours to schedule your personalized demo.
+            <h3 className="text-base font-semibold text-white mb-1.5">Request received</h3>
+            <p className="text-gray-500 text-sm mb-6 max-w-xs mx-auto">
+              Our team will reach out within 24 hours to schedule your demo.
             </p>
-            <button
-              onClick={handleClose}
-              className="px-8 py-3 bg-gradient-to-r from-primary to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all hover:-translate-y-0.5"
-            >
+            <button onClick={handleClose} className="px-6 py-2.5 bg-sky-400 text-gray-900 rounded-xl text-sm font-semibold hover:bg-sky-300 transition-all">
               Done
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="p-6 pt-5 space-y-4">
             {status === 'error' && (
-              <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl animate-fade-in">
-                <AlertCircle size={16} className="flex-shrink-0 mt-0.5" />
+              <div className="flex items-center gap-2.5 p-3 bg-red-500/10 border border-red-500/15 text-red-400 text-sm rounded-xl">
+                <AlertCircle size={14} className="flex-shrink-0" />
                 <span>{errorMsg}</span>
               </div>
             )}
 
-            <div>
-              <label htmlFor="demo-name" className="block text-sm font-semibold text-gray-700 mb-1.5">Full Name</label>
-              <input
-                ref={nameRef}
-                id="demo-name"
-                name="name"
-                type="text"
-                value={form.name}
-                onChange={handleChange}
-                required
-                placeholder="Jane Smith"
-                className={inputCls}
-              />
+            <Field id="demo-name" label="Full Name">
+              <input ref={nameRef} id="demo-name" name="name" type="text" value={form.name} onChange={handleChange} required placeholder="Jane Smith" className={inputCls} />
+            </Field>
+
+            <Field id="demo-email" label="Work Email">
+              <input id="demo-email" name="email" type="email" value={form.email} onChange={handleChange} required placeholder="jane@company.com" className={inputCls} />
+            </Field>
+
+            <Field id="demo-company" label="Company">
+              <input id="demo-company" name="company" type="text" value={form.company} onChange={handleChange} required placeholder="Acme Manufacturing" className={inputCls} />
+            </Field>
+
+            <Field id="demo-phone" label="Phone" optional>
+              <input id="demo-phone" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+1 (555) 000-0000" className={inputCls} />
+            </Field>
+
+            <Field id="demo-message" label="Message" optional>
+              <textarea id="demo-message" name="message" value={form.message} onChange={handleChange} rows={3} placeholder="Tell us about your use case..." className={`${inputCls} resize-none`} />
+            </Field>
+
+            <div className="pt-1">
+              <button
+                type="submit"
+                disabled={status === 'submitting'}
+                className="w-full py-3 bg-sky-400 text-gray-900 rounded-xl text-sm font-semibold hover:bg-sky-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              >
+                {status === 'submitting' ? (
+                  <><Loader2 size={15} className="animate-spin" /> Submitting...</>
+                ) : (
+                  <><Send size={14} /> Submit Request</>
+                )}
+              </button>
+              <p className="text-[11px] text-gray-600 text-center mt-3">
+                By submitting, you agree to be contacted about PredixaAI products.
+              </p>
             </div>
-
-            <div>
-              <label htmlFor="demo-email" className="block text-sm font-semibold text-gray-700 mb-1.5">Work Email</label>
-              <input
-                id="demo-email"
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-                placeholder="jane@company.com"
-                className={inputCls}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="demo-company" className="block text-sm font-semibold text-gray-700 mb-1.5">Company</label>
-              <input
-                id="demo-company"
-                name="company"
-                type="text"
-                value={form.company}
-                onChange={handleChange}
-                required
-                placeholder="Acme Manufacturing"
-                className={inputCls}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="demo-phone" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Phone <span className="text-gray-400 font-normal">(optional)</span>
-              </label>
-              <input
-                id="demo-phone"
-                name="phone"
-                type="tel"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="+1 (555) 000-0000"
-                className={inputCls}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="demo-message" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Message <span className="text-gray-400 font-normal">(optional)</span>
-              </label>
-              <textarea
-                id="demo-message"
-                name="message"
-                value={form.message}
-                onChange={handleChange}
-                rows={3}
-                placeholder="Tell us about your use case..."
-                className={`${inputCls} resize-none`}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={status === 'submitting'}
-              className="group w-full py-3.5 bg-gradient-to-r from-primary to-purple-600 text-white rounded-xl font-semibold hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2"
-            >
-              {status === 'submitting' ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  Submitting...
-                </>
-              ) : (
-                <>
-                  Submit Request
-                  <Send size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                </>
-              )}
-            </button>
-
-            <p className="text-[11px] text-gray-400 text-center pt-1">
-              By submitting, you agree to be contacted about PredixaAI products.
-            </p>
           </form>
         )}
       </div>

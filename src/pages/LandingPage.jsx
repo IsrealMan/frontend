@@ -212,23 +212,23 @@ function LandingPage() {
 
       {/* ── About ── */}
       <section id="about" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 border-t border-white/5">
-        <div ref={r1} className="reveal max-w-5xl mx-auto">
+        <div ref={r1} className="reveal max-w-7xl mx-auto">
           <span className="text-sky-400 text-sm font-semibold tracking-[0.2em] uppercase block mb-5">
             About
           </span>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-8 tracking-tight text-white max-w-3xl">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-8 tracking-tight text-white max-w-4xl">
             Enabling Industry 5.0 Manufacturing
           </h2>
-          <p className="text-xl sm:text-2xl text-gray-400 leading-relaxed max-w-3xl mb-12">
+          <p className="text-xl sm:text-2xl text-gray-400 leading-relaxed max-w-4xl mb-12">
             Industry 4.0 connected factories through data. Industry 5.0 introduces intelligent systems that help humans make better decisions.<br />
             PredixaAI is building the intelligence layer that enables factories to move from reactive troubleshooting to autonomous optimization.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {industries.map((ind) => (
-              <div key={ind.label} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-5 py-4">
-                <BarChart3 size={18} className="text-sky-400 flex-shrink-0" />
-                <span className="text-base text-gray-300 font-medium">{ind.label}</span>
+              <div key={ind.label} className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-5 py-5">
+                <BarChart3 size={20} className="text-sky-400 flex-shrink-0" />
+                <span className="text-base text-gray-300 font-medium whitespace-nowrap">{ind.label}</span>
               </div>
             ))}
           </div>

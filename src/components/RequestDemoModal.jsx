@@ -3,7 +3,7 @@ import { X, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import api from '../services/api';
 
 function RequestDemoModal({ open, onClose }) {
-  const [form, setForm] = useState({ name: '', email: '', company: '', phone: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', company: '', phone: '', country: '', industry: '', message: '' });
   const [status, setStatus] = useState('idle');
   const [errorMsg, setErrorMsg] = useState('');
   const nameRef = useRef(null);
@@ -33,7 +33,7 @@ function RequestDemoModal({ open, onClose }) {
     try {
       await api.post('/api/demo-request', form);
       setStatus('success');
-      setForm({ name: '', email: '', company: '', phone: '', message: '' });
+      setForm({ name: '', email: '', company: '', phone: '', country: '', industry: '', message: '' });
     } catch (err) {
       setStatus('error');
       setErrorMsg(err.response?.data?.error || 'Something went wrong. Please try again.');
@@ -110,6 +110,26 @@ function RequestDemoModal({ open, onClose }) {
             <Field id="demo-phone" label="Phone" optional>
               <input id="demo-phone" name="phone" type="tel" value={form.phone} onChange={handleChange} placeholder="+1 (555) 000-0000" className={inputCls} />
             </Field>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Field id="demo-country" label="Country" optional>
+                <input id="demo-country" name="country" type="text" value={form.country} onChange={handleChange} placeholder="United States" className={inputCls} />
+              </Field>
+              <Field id="demo-industry" label="Industry" optional>
+                <select id="demo-industry" name="industry" value={form.industry} onChange={handleChange} className={`${inputCls} appearance-none`}>
+                  <option value="">Select...</option>
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Automotive">Automotive</option>
+                  <option value="Pharmaceuticals">Pharmaceuticals</option>
+                  <option value="Food & Beverage">Food & Beverage</option>
+                  <option value="Electronics">Electronics</option>
+                  <option value="Chemicals">Chemicals</option>
+                  <option value="Aerospace">Aerospace</option>
+                  <option value="Energy">Energy</option>
+                  <option value="Other">Other</option>
+                </select>
+              </Field>
+            </div>
 
             <Field id="demo-message" label="Message" optional>
               <textarea id="demo-message" name="message" value={form.message} onChange={handleChange} rows={3} placeholder="Tell us about your use case..." className={`${inputCls} resize-none`} />
